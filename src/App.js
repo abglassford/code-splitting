@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    route: 'Page1',
+  }
+
+  importComponent = () => import(`./components/${this.state.route}`);
+
+  onRouteChange = route => () => {
+    this.setState({ route })
+  }
+
+  render() {
+    const LazyPage = React.lazy(this.importComponent);
+
+    return (
+      <React.Suspense fallback={<div>Loading</div>}>
+        <LazyPage
+          route={this.state.route}
+          onRouteChange={this.onRouteChange}
+        />
+      </React.Suspense>
+    );
+  }
 }
 
 export default App;
